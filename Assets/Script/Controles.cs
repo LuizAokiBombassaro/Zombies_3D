@@ -37,24 +37,19 @@ public class Controles : MonoBehaviour
 
     private void FixedUpdate()
     {
-        GetComponent<Rigidbody>().MovePosition
-    (GetComponent<Rigidbody>().position +
-    (direcao * PlayerSpeed * Time.deltaTime));
+        GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + (direcao * PlayerSpeed * Time.deltaTime));
 
         Ray raio = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane ground = new Plane(Vector3.up, Vector3.zero);
+        float rayLength;
+
         Debug.DrawRay(raio.origin, raio.direction * 100, Color.red);
 
-        RaycastHit impacto;
-
-        if (Physics.Raycast(raio, out impacto, 100))
+        if (ground.Raycast(raio, out rayLength))
         {
-            Vector3 posicaoMiraJogador = impacto.point - transform.position;
+            Vector3 pointTolook = raio.GetPoint(rayLength);
 
-            posicaoMiraJogador.y = transform.position.y;
-
-            Quaternion novaRotacao = Quaternion.LookRotation(posicaoMiraJogador);
-
-            GetComponent<Rigidbody>().MoveRotation(novaRotacao);
+            transform.LookAt(new Vector3(pointTolook.x, transform.position.y, pointTolook.z));
         }
     }
 }
